@@ -62,7 +62,13 @@ import {
   SignableMessage,
 } from "@multiversx/sdk-core";
 import { UserVerifier } from "@multiversx/sdk-wallet/out/userVerifier";
-import { CasperClient, DeployUtil, CLPublicKey } from "casper-js-sdk";
+import {
+  CasperClient,
+  DeployUtil,
+  CLPublicKey,
+  Keys,
+  formatMessageWithHeaders,
+} from "casper-js-sdk";
 
 /**
  * Types
@@ -1517,8 +1523,13 @@ export function JsonRpcContextProvider({
             },
           });
 
-          // TODO: verify signature
-          const valid = true;
+          const signature = result.signature;
+          const signatureBytes = Buffer.from(signature, "hex");
+          var valid = Keys.validateSignature(
+            formatMessageWithHeaders(message),
+            Uint8Array.from(signatureBytes.slice(1)),
+            CLPublicKey.fromHex(address)
+          );
 
           return {
             method,

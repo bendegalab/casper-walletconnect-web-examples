@@ -1,4 +1,5 @@
 import { Keys, DeployUtil } from 'casper-js-sdk'
+const { Ed25519, Secp256K1, SignatureAlgorithm } = Keys
 
 /**
  * Types
@@ -46,8 +47,13 @@ export default class CasperLib {
   }
 
   public async signMessage(message: string) {
-    const signature = this.keyPair.sign(Uint8Array.from(Buffer.from(message)))
-    // TODO: implement sign message
-    return { signature: Buffer.from(signature).toString('hex') }
+    var messageWithHeader = `Casper Message:\n${message}`
+    const signature = this.keyPair.sign(Uint8Array.from(Buffer.from(messageWithHeader)))
+    return {
+      signature:
+        this.keyPair.signatureAlgorithm == SignatureAlgorithm.Ed25519
+          ? Ed25519.accountHex(signature)
+          : Secp256K1.accountHex(signature)
+    }
   }
 }
