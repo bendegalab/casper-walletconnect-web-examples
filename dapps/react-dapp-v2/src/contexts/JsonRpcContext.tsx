@@ -1525,6 +1525,7 @@ export function JsonRpcContextProvider({
 
           const signature = result.signature;
           const signatureBytes = Buffer.from(signature, "hex");
+
           var valid = Keys.validateSignature(
             formatMessageWithHeaders(message),
             Uint8Array.from(signatureBytes.slice(1)),
